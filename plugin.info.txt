@@ -1,0 +1,7 @@
+base   codeprettify
+author Satoshi Sahara
+email  <sahara.satoshi@gmail.com>
+date   2015-01-19 dev
+name   Code Pretiffier
+desc   syntax highlighting of source code snippets in wiki page using google-code-prettify
+url    
