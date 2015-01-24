@@ -20,6 +20,8 @@ Usage/Example
 </Code>
 ```
 
+![Example #1](code-prettifier-example.png "output of Example #1")
+
 
 ----
 Licensed under the GNU Public License (GPL) version 2
