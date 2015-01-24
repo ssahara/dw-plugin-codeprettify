@@ -34,8 +34,8 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
         }
 
         if ($this->getConf('lang_handlers')) {
-            $lang = trim($this->getConf('lang_handlers'), ",");
-            $lang = str_replace(' ', '', $lang);
+            $lang = trim($this->getConf('lang_handlers'), "\s,");
+            $lang = preg_replace(' ', '', $lang);
             $lang = 'lang='.str_replace(',', '&lang=', $lang);
         }
 
