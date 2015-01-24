@@ -29,6 +29,6 @@ pre.prettyprint {
 /*
  * put line numbers on every line instead of just every fifth line
  */
-pre.prettyprint li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 {
-    list-style-type: decimal !important;
+pre.prettyprint li {
+    list-style: decimal outside;
 }
