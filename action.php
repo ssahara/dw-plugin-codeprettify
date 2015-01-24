@@ -20,7 +20,23 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
 
     // register hook
     public function register(Doku_Event_Handler $controller) {
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER', $this, 'exportToJSINFO');
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'handle_tpl_metaheader_output');
+    }
+
+    /**
+     * export configuration setting to $JSINFO
+     */
+    public function exportToJSINFO(Doku_Event &$event, $param) {
+        global $JSINFO;
+
+        $loader = $this->getConf('url_loader');
+        if (empty($loader)) {
+            $loader = DOKU_BASE.'lib/plugins/codeprettify/google-code-prettify/run_prettify.js';
+        }
+        $JSINFO['plugin_codeprettify'] = array(
+            'loader_base' => dirname($loader),
+        );
     }
 
     /**
