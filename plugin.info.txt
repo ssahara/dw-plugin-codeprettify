@@ -4,4 +4,4 @@ email  <sahara.satoshi@gmail.com>
 date   2015-01-24
 name   Code Pretiffier
 desc   syntax highlighting of source code snippets in wiki page using google-code-prettify
-url    
+url    https://www.dokuwiki.org/plugin:codeprettify
