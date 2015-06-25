@@ -45,10 +45,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 $match = substr($match, 5, -1);
                 list($params, $title) = explode('|', $match);
                 $class['prettify'] = 'prettyprint';
-                if (preg_match('/^[: ]+(\w+)/', $params, $m)) {
+                if (preg_match('/^[: ](?:lang[-:])?(\w+)/', $params, $m)) {
                     if ($m[1] != "linenums") $class['language'] = 'lang-'.$m[1];
-                } elseif (preg_match('/lang-\w+/', $params, $m)) {
-                    $class['language'] = $m[0];
                 }
                 if (preg_match('/linenums(:\d+)?/', $params, $m)) {
                     $class['linenums'] = $m[0];
