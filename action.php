@@ -8,8 +8,6 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC.'lib/plugins/');
-require_once(DOKU_PLUGIN.'action.php');
 
 /**
  * All DokuWiki plugins to interfere with the event system
@@ -26,7 +24,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
     /**
      * export configuration setting to $JSINFO
      */
-    public function exportToJSINFO(Doku_Event &$event, $param) {
+    public function exportToJSINFO(Doku_Event $event, $param) {
         global $JSINFO;
 
         $loader = $this->getConf('url_loader');
@@ -41,7 +39,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
     /**
      * register google code prettifier script loader
      */
-    public function handle_tpl_metaheader_output(Doku_Event &$event, $param) {
+    public function handle_tpl_metaheader_output(Doku_Event $event, $param) {
 
         $loader = $this->getConf('url_loader');
         if (empty($loader)) {
