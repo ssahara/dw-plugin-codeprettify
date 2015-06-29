@@ -48,7 +48,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 if (preg_match('/^[: ](?:lang[-:])?(\w+)/', $params, $m)) {
                     if ($m[1] != "linenums") $class['language'] = 'lang-'.$m[1];
                 }
-                if (preg_match('/linenums(:\d+)?/', $params, $m)) {
+                if (preg_match('/ linenums(:\d+)?/', $params, $m)) {
                     $class['linenums'] = $m[0];
                 }
                 return array($state, array($class, $title));
