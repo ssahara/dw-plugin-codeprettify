@@ -36,14 +36,14 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    public function handle($match, $state, $pos, Doku_Handler $handler){
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
 
         switch ($state) {
             case DOKU_LEXER_ENTER:
                 $match = substr($match, 5, -1);
                 list($params, $title) = explode('|', $match);
                 $class['prettify'] = 'prettyprint';
-                if (preg_match('/(?:^:| (?:lang[-:])?)(?!linenums)(\w+)/', $params, $m)) {
+                if (preg_match('/(?:^:| (?:lang[-:])?)(?!(?:no-?)?linenums)(\w+)/', $params, $m)) {
                     $class['language'] = 'lang-'.$m[1];
                 }
                 if (preg_match('/ linenums(:\d+)?/', $params, $m)) {
