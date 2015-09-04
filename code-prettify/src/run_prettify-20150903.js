@@ -176,14 +176,6 @@ var IN_GLOBAL_SCOPE = false;
   var LOADER_BASE_URL =
      'https://cdn.rawgit.com/google/code-prettify/master/loader';
 
-   // DokuWiki Plugin Code Prettifier
-   // by Satoshi Sahara <sahara.satoshi@gmail.com>
-   // 2015-01-24
-   // Added 3 lines to accommodate the Auto-loader for DokuWiki
-   if (typeof JSINFO.plugin_codeprettify.loader_base !== undefined) {
-       LOADER_BASE_URL = JSINFO.plugin_codeprettify.loader_base;
-   }
-
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
 
