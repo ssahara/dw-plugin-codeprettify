@@ -18,7 +18,8 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
     // register hook
     public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('DOKUWIKI_STARTED', 'AFTER', $this, 'exportToJSINFO');
-        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'handle_tpl_metaheader_output');
+        //$controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'handle_tpl_metaheader_output');
+        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'load_code_prettify');
     }
 
     /**
@@ -65,4 +66,28 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
                 '_data'   => '',
         );
     }
+
+    /**
+     * register google code prettifier script and css
+     */
+    public function load_code_prettify(Doku_Event $event, $param) {
+
+        // prettify.js
+        $event->data["script"][] = array (
+                'type'    => 'text/javascript',
+                'charset' => 'utf-8',
+                'src'     => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/prettify.js',
+                '_data'   => '',
+        );
+
+        // prettify.css
+        $event->data['link'][] = array(
+                'rel'     => 'stylesheet',
+                'type'    => 'text/css',
+                'href'    => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/prettify.css',
+        );
+
+    }
+
+
 }
