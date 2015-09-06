@@ -1,7 +1,7 @@
 DokuWiki plugin Code Prettifier
 ===============================
 
-syntax highlighting of source code snippets in wiki page, using [Javascript code prettifier](https://github.com/google/code-prettify).
+syntax highlighting of source code snippets in wiki page, using [Javascript code prettifier](https://github.com/google/code-prettify) (former google-code-prettify).
 
 
 Usage/Example

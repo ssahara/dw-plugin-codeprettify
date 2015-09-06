@@ -1,6 +1,6 @@
 /*
  * script.js : code-prettify plugin for DokuWiki
- * register prettyprint() to the event listener
+ * register prettyprint() event listener on the window
  * @author Satoshi Sahara <sahara.satoshi@gmail.com>
  */
 
