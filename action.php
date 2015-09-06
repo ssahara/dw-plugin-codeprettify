@@ -74,20 +74,20 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
 
         // Base URL for prettify.js and optional language handler scripts
         // ex: https://cdn.rawgit.com/google/code-prettify/master/src/
-        if (empty($this->getConf('url_prettify_handlers'))) {
+        if ($this->getConf('url_prettify_handlers')) {
+            $urlPrettifyHandlers = $this->getConf('url_prettify_handlers');
+        } else {
             $urlPrettifyHandlers =
                 DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/';
-        } else {
-            $urlPrettifyHandlers = $this->getConf('url_prettify_handlers');
         }
 
         // Base URL for color theme for code-prettify (css)
         // ex: https://cdn.rawgit.com/google/code-prettify/master/styles/
-        if (empty($this->getConf('url_prettify_skins'))) {
+        if ($this->getConf('url_prettify_skins')) {
+            $urlPrettifySkins = $this->getConf('url_prettify_skins');
+        } else {
             $urlPrettifySkins =
                 DOKU_BASE.'lib/plugins/codeprettify/code-prettify/styles/';
-        } else {
-            $urlPrettifySkins = $this->getConf('url_prettify_skins');
         }
 
         // load prettify.js and optional language handler scripts
