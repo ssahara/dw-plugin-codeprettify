@@ -72,7 +72,25 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
      */
     public function load_code_prettify(Doku_Event $event, $param) {
 
-        // prettify.js and optional language handler scripts
+        // Base URL for prettify.js and optional language handler scripts
+        // ex: https://cdn.rawgit.com/google/code-prettify/master/src/
+        if (empty($this->getConf('url_prettify_handlers'))) {
+            $urlPrettifyHandlers =
+                DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/';
+        } else {
+            $urlPrettifyHandlers = $this->getConf('url_prettify_handlers');
+        }
+
+        // Base URL for color theme for code-prettify (css)
+        // ex: https://cdn.rawgit.com/google/code-prettify/master/styles/
+        if (empty($this->getConf('url_prettify_skins'))) {
+            $urlPrettifySkins =
+                DOKU_BASE.'lib/plugins/codeprettify/code-prettify/styles/';
+        } else {
+            $urlPrettifySkins = $this->getConf('url_prettify_skins');
+        }
+
+        // load prettify.js and optional language handler scripts
         $handler = 'prettify';
         if ($this->getConf('lang_handlers')) {
             $handler .= ',' . trim($this->getConf('lang_handlers'), ',');
@@ -85,21 +103,21 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
             $event->data['script'][] = array (
                 'type'    => 'text/javascript',
                 'charset' => 'utf-8',
-                'src'     => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/'.$script.'.js',
+                'src'     => $urlPrettifyHandlers. $script.'.js',
                 '_data'   => '',
             );
         }
 
-        // color theme for code-prettify (css file)
+        // load color theme for code-prettify (css file)
         if ($this->getConf('skin')) {
-            $skin = 'styles/'.$this->getConf('skin');
+            $skin = $urlPrettifySkins . $this->getConf('skin');
         } else {
-            $skin = 'src/prettify.css';
+            $skin = $urlPrettifyHandlers .'prettify.css';
         }
         $event->data['link'][] = array (
                 'rel'     => 'stylesheet',
                 'type'    => 'text/css',
-                'href'    => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/'.$skin,
+                'href'    => $skin,
         );
     }
 
