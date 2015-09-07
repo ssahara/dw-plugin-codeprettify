@@ -8,7 +8,9 @@
 
 $meta['override'] = array('onoff');  // override DW syntax
 
-$meta['url_loader']     = array('string');
+$meta['url_prettify_handlers'] = array('string');
+$meta['url_prettify_skins']    = array('string');
+
 $meta['lang_handlers']  = array('string');
 $meta['skin']           = array('string');
 

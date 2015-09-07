@@ -8,7 +8,9 @@
 
 $conf['override'] = 0;  // override DW syntax disabled
 
-$conf['url_loader']     = ''; //https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js
+$conf['url_prettify_handlers'] = '';
+$conf['url_prettify_skins']    = '';
+
 $conf['lang_handlers']  = 'css';
 $conf['skin']           = '';
 
