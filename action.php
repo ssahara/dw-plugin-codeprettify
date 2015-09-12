@@ -32,7 +32,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
             $urlPrettifyHandlers = $this->getConf('url_prettify_handlers');
         } else {
             $urlPrettifyHandlers =
-                DOKU_BASE.'lib/plugins/codeprettify/google-code-prettify/';
+                DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/';
         }
 
         // Base URL for color theme for code-prettify (css)
@@ -41,7 +41,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
             $urlPrettifySkins = $this->getConf('url_prettify_skins');
         } else {
             $urlPrettifySkins =
-                DOKU_BASE.'lib/plugins/codeprettify/google-code-prettify/skins/';
+                DOKU_BASE.'lib/plugins/codeprettify/code-prettify/styles/';
         }
 
         // load prettify.js and optional language handler scripts
