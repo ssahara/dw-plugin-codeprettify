@@ -224,20 +224,22 @@ var IN_GLOBAL_SCOPE = false;
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
-    // Copyright (C) 2006 Google Inc.
-    //
-    // Licensed under the Apache License, Version 2.0 (the "License");
-    // you may not use this file except in compliance with the License.
-    // You may obtain a copy of the License at
-    //
-    //      http://www.apache.org/licenses/LICENSE-2.0
-    //
-    // Unless required by applicable law or agreed to in writing, software
-    // distributed under the License is distributed on an "AS IS" BASIS,
-    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    // See the License for the specific language governing permissions and
-    // limitations under the License.
-    
+    /**
+     * @license
+     * Copyright (C) 2006 Google Inc.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *      http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
     
     /**
      * @fileoverview
@@ -327,7 +329,7 @@ var IN_GLOBAL_SCOPE = false;
           "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
           "static_cast,template,typeid,typename,using,virtual,where"];
       var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-          "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
+          "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
           "instanceof,interface,null,native,package,strictfp,super,synchronized," +
           "throws,transient"];
       var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
@@ -340,8 +342,8 @@ var IN_GLOBAL_SCOPE = false;
           "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
           "throw,true,try,unless,until,when,while,yes";
       var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-          "debugger,eval,export,function,get,null,set,undefined,var,with," +
-          "Infinity,NaN"];
+          "debugger,eval,export,function,get,instanceof,null,set,undefined," +
+          "var,with,Infinity,NaN"];
       var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
           "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
           "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
@@ -353,14 +355,11 @@ var IN_GLOBAL_SCOPE = false;
           "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
           "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
           "BEGIN,END"];
-       var RUST_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "as,assert,const,copy,drop," +
-          "enum,extern,fail,false,fn,impl,let,log,loop,match,mod,move,mut,priv," +
-          "pub,pure,ref,self,static,struct,true,trait,type,unsafe,use"];
       var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
           "function,in,local,set,then,until"];
       var ALL_KEYWORDS = [
-          CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
-          PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+          CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS,
+          PERL_KEYWORDS, PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
       var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
     
       // token style names.  correspond to css classes
@@ -1208,10 +1207,14 @@ var IN_GLOBAL_SCOPE = false;
        *     HTMLOListElement, and each line is moved into a separate list item.
        *     This requires cloning elements, so the input might not have unique
        *     IDs after numbering.
+       * @param {number|null|boolean} startLineNum
+       *     If truthy, coerced to an integer which is the 1-indexed line number
+       *     of the first line of code.  The number of the first line will be
+       *     attached to the list.
        * @param {boolean} isPreformatted true iff white-space in text nodes should
        *     be treated as significant.
        */
-      function numberLines(node, opt_startLineNum, isPreformatted) {
+      function numberLines(node, startLineNum, isPreformatted) {
         var nocode = /(?:^|\s)nocode(?:\s|$)/;
         var lineBreak = /\r\n?|\n/;
       
@@ -1312,13 +1315,13 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         // Make sure numeric indices show correctly.
-        if (opt_startLineNum === (opt_startLineNum|0)) {
-          listItems[0].setAttribute('value', opt_startLineNum);
+        if (startLineNum === (startLineNum|0)) {
+          listItems[0].setAttribute('value', startLineNum);
         }
       
         var ol = document.createElement('ol');
         ol.className = 'linenums';
-        var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
+        var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
         for (var i = 0, n = listItems.length; i < n; ++i) {
           li = listItems[i];
           // Stick a class on the LIs so that stylesheets can
@@ -1332,7 +1335,8 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         node.appendChild(ol);
-      }    
+      }
+    
       /**
        * Breaks {@code job.sourceCode} around style boundaries in
        * {@code job.decorations} and modifies {@code job.sourceNode} in place.
@@ -1592,11 +1596,6 @@ var IN_GLOBAL_SCOPE = false;
               'tripleQuotedStrings': true,
               'regexLiterals': true
             }), ['coffee']);
-      registerLangHandler(sourceDecorator({
-              'keywords': RUST_KEYWORDS,
-              'cStyleComments': true,
-              'multilineStrings': true
-            }), ['rc', 'rs', 'rust']);
       registerLangHandler(
           createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
     
