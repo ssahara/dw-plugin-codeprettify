@@ -31,4 +31,4 @@ The [Javascript code prettifier](https://github.com/google/code-prettify), which
 More information is available:
   * https://www.dokuwiki.org/plugin:codeprettify
 
-(c) 2015 Satoshi Sahara \<sahara.satoshi@gmail.com>
+(c) 2015-2016 Satoshi Sahara \<sahara.satoshi@gmail.com>
