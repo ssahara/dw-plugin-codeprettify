@@ -62,6 +62,16 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
             );
         }
 
+        // load convenient language handler which enables prettyprinting
+        // as plain text, ie. not any kind of language code.
+        // use <Code:none>..</Code> to show code as plain text.
+        $event->data['script'][] = array (
+            'type'    => 'text/javascript',
+            'charset' => 'utf-8',
+            'src'     => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/lang-none.js',
+            '_data'   => '',
+        );
+
         // load color theme for code-prettify (css file)
         if ($this->getConf('skin')) {
             $skin = $urlPrettifySkins . $this->getConf('skin');
