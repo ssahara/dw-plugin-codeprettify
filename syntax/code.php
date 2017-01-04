@@ -12,24 +12,32 @@ if(!defined('DOKU_INC')) die();
 
 class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
+    protected $mode;
     protected $entry_pattern = '<Code\b.*?>(?=.*?</Code>)';
     protected $exit_pattern  = '</Code>';
+
+    function __construct() {
+        $this->mode = substr(get_class($this), 7);
+    }
 
     public function getType() { return 'protected'; }
     public function getPType(){ return 'block'; }
     public function getSort() { return 199; } // < native 'code' mode (=200)
 
+    /**
+     * Connect pattern to lexer
+     */
     public function connectTo($mode) {
-        $this->Lexer->addEntryPattern($this->entry_pattern, $mode, substr(get_class($this), 7));
+        $this->Lexer->addEntryPattern($this->entry_pattern, $mode, $this->mode);
         if ($this->getConf('override')) {
-            $this->Lexer->addEntryPattern('<code\b.*?>(?=.*?</code>)', $mode, substr(get_class($this), 7));
+            $this->Lexer->addEntryPattern('<code\b.*?>(?=.*?</code>)', $mode, $this->mode);
         }
     }
 
     public function postConnect() {
-        $this->Lexer->addExitPattern($this->exit_pattern, substr(get_class($this), 7));
+        $this->Lexer->addExitPattern($this->exit_pattern, $this->mode);
         if ($this->getConf('override')) {
-            $this->Lexer->addExitPattern('</code>', substr(get_class($this), 7));
+            $this->Lexer->addExitPattern('</code>', $this->mode);
         }
     }
 
