@@ -1,7 +1,7 @@
 base   codeprettify
 author Satoshi Sahara
 email  <sahara.satoshi@gmail.com>
-date   2016-09-03
+date   2017-01-05
 name   Code Prettifier
 desc   syntax highlighting of source code snippets in wiki page using Javascript code prettifier
 url    https://www.dokuwiki.org/plugin:codeprettify
