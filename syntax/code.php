@@ -71,9 +71,9 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      */
     public function render($format, Doku_Renderer $renderer, $indata) {
 
+        if ($format == 'metadata') return false;
         if (empty($indata)) return false;
         list($state, $data) = $indata;
-        if ($format != 'xhtml') return false;
 
         switch ($state) {
             case DOKU_LEXER_ENTER:
