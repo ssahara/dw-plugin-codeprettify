@@ -5,7 +5,7 @@
  * @license GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Satoshi Sahara <sahara.satoshi@gmail.com>
  *
- * usage: ex. <Code:css linenums:5 lang-css> ... </Code>
+ * usage: ex. <Code:css linenums:5 lang-css | title > ... </Code>
  */
 
 if(!defined('DOKU_INC')) die();
@@ -25,6 +25,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         $this->patterns[0] = '<Code\b'.$param.'>'.'(?=.*?</Code>)';
         $this->patterns[1] = '</Code>';
 
+        // DokuWiki original syntax patterns
         $this->patterns[2] = '<code\b.*?>(?=.*?</code>)';
         $this->patterns[3] = '</code>';
     }
@@ -59,6 +60,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_ENTER:
                 $match = substr($match, 5, -1);
                 list($params, $title) = explode('|', $match);
+
+                // prettifier parameters
                 $class['prettify'] = 'prettyprint';
                 if (preg_match('/(?:^:| (?:lang[-:])?)(?!(?:no-?)?linenums)(\w+)/', $params, $m)) {
                     $class['language'] = 'lang-'.$m[1];
@@ -66,7 +69,26 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 if (preg_match('/ linenums(:\d+)?/', $params, $m)) {
                     $class['linenums'] = $m[0];
                 }
-                return array($state, array($class, $title));
+
+                // title parameter
+                if ($title) {
+                    $plugin = substr(get_class($this), 14);
+                    $calls = p_get_instructions($title);
+
+                    // open_div instruction
+                    $data = array('div_open','');
+                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
+
+                    // title: skip first "document_start" and last "document_end" instructions
+                    for ($i = 1, $max = count($calls)-1; $i < $max; $i++) {
+                        $handler->CallWriter->writeCall($calls[$i]);
+                    }
+                    // close_div instruction
+                    $data = array('div_close','');
+                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
+                }
+
+                return array($state, $class);
             case DOKU_LEXER_UNMATCHED:
                 return array($state, $match);
             case DOKU_LEXER_EXIT:
@@ -85,15 +107,18 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         list($state, $data) = $indata;
 
         switch ($state) {
+            case 'div_open':
+                $html = '<div class="plugin_codeprettify">';
+                $renderer->doc .= $html;
+                break;
+
+            case 'div_close':
+                $html = '</div>';
+                $renderer->doc .= $html;
+                break;
+
             case DOKU_LEXER_ENTER:
-                list($class, $title) = $data;
-                if ($title) {
-                    //$html = '<div class="plugin_codeprettify">'.hsc($title).'</div>';
-                    $html = p_render($format, p_get_instructions($title), $info);
-                    $html = '<div class="plugin_codeprettify">'.$html.'</div>';
-                    $renderer->doc .= $html;
-                }
-                $class = implode(' ', $class);
+                $class = implode(' ', $data);
                 $renderer->doc .= '<pre class="'.$class.'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
