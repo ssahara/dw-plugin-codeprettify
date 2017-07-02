@@ -13,7 +13,7 @@ if(!defined('DOKU_INC')) die();
 class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
     protected $mode;
-    protected $patterns;
+    protected $pattern = array();
 
     function __construct() {
         $this->mode = substr(get_class($this), 7);
@@ -22,12 +22,13 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         $n = 3;
         $param = str_repeat('(?>[^<>\n]+|<', $n).str_repeat('>)*', $n);       
 
-        $this->patterns[0] = '<Code\b'.$param.'>'.'(?=.*?</Code>)';
-        $this->patterns[1] = '</Code>';
+        // syntax patterns
+        $this->pattern[1] = '<Code\b'.$param.'>'.'(?=.*?</Code>)';
+        $this->pattern[4] = '</Code>';
 
         // DokuWiki original syntax patterns
-        $this->patterns[2] = '<code\b.*?>(?=.*?</code>)';
-        $this->patterns[3] = '</code>';
+        $this->pattern[11] = '<code\b.*?>(?=.*?</code>)';
+        $this->pattern[14] = '</code>';
     }
 
     public function getType() { return 'protected'; }
@@ -38,16 +39,16 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      * Connect pattern to lexer
      */
     public function connectTo($mode) {
-        $this->Lexer->addEntryPattern($this->patterns[0], $mode, $this->mode);
+        $this->Lexer->addEntryPattern($this->pattern[1], $mode, $this->mode);
         if ($this->getConf('override')) {
-            $this->Lexer->addEntryPattern($this->patterns[2], $mode, $this->mode);
+            $this->Lexer->addEntryPattern($this->pattern[11], $mode, $this->mode);
         }
     }
 
     public function postConnect() {
-        $this->Lexer->addExitPattern($this->patterns[1], $this->mode);
+        $this->Lexer->addExitPattern($this->pattern[4], $this->mode);
         if ($this->getConf('override')) {
-            $this->Lexer->addExitPattern($this->patterns[3], $this->mode);
+            $this->Lexer->addExitPattern($this->pattern[14], $this->mode);
         }
     }
 
