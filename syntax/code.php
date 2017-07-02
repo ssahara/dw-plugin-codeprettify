@@ -31,21 +31,21 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         $this->pattern[14] = '</code>';
     }
 
-    public function getType() { return 'protected'; }
-    public function getPType(){ return 'block'; }
-    public function getSort() { return 199; } // < native 'code' mode (=200)
+    function getType() { return 'protected'; }
+    function getPType(){ return 'block'; }
+    function getSort() { return 199; } // < native 'code' mode (=200)
 
     /**
      * Connect pattern to lexer
      */
-    public function connectTo($mode) {
+    function connectTo($mode) {
         $this->Lexer->addEntryPattern($this->pattern[1], $mode, $this->mode);
         if ($this->getConf('override')) {
             $this->Lexer->addEntryPattern($this->pattern[11], $mode, $this->mode);
         }
     }
 
-    public function postConnect() {
+    function postConnect() {
         $this->Lexer->addExitPattern($this->pattern[4], $this->mode);
         if ($this->getConf('override')) {
             $this->Lexer->addExitPattern($this->pattern[14], $this->mode);
@@ -55,7 +55,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    public function handle($match, $state, $pos, Doku_Handler $handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
 
         switch ($state) {
             case DOKU_LEXER_ENTER:
@@ -101,7 +101,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      */
-    public function render($format, Doku_Renderer $renderer, $indata) {
+    function render($format, Doku_Renderer $renderer, $indata) {
 
         if ($format == 'metadata') return false;
         if (empty($indata)) return false;

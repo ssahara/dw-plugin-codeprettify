@@ -16,7 +16,7 @@ if(!defined('DOKU_INC')) die();
 class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
 
     // register hook
-    public function register(Doku_Event_Handler $controller) {
+    function register(Doku_Event_Handler $controller) {
         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'load_code_prettify');
     }
 
@@ -24,7 +24,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
     /**
      * register google code prettifier script and css
      */
-    public function load_code_prettify(Doku_Event $event, $param) {
+    function load_code_prettify(Doku_Event $event, $param) {
 
         // Base URL for prettify.js and optional language handler scripts
         // ex: https://cdn.rawgit.com/google/code-prettify/master/src/
@@ -45,13 +45,13 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
         }
 
         // load prettify.js and optional language handler scripts
-        $handler = 'prettify';
+        $handlers = 'prettify';
         if ($this->getConf('lang_handlers')) {
-            $handler .= ',' . trim($this->getConf('lang_handlers'), ',');
-            $handler = str_replace(' ', '', $handler);
-            $handler = str_replace(',',',lang-', $handler);
+            $handlers .= ',' . trim($this->getConf('lang_handlers'), ',');
+            $handlers = str_replace(' ', '', $handlers);
+            $handlers = str_replace(',',',lang-', $handlers);
         }
-        $scripts = explode(',', $handler);
+        $scripts = explode(',', $handlers);
 
         foreach ($scripts as $script) {
             $event->data['script'][] = array (
