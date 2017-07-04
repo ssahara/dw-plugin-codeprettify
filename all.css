@@ -29,6 +29,7 @@ pre.prettyprint {
 /*
  * put line numbers on every line instead of just every fifth line
  */
-pre.prettyprint li {
+pre.prettyprint ol {
+    padding-left: 1em;
     list-style: decimal outside;
 }
