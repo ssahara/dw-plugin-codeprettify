@@ -8,6 +8,8 @@
 
 $conf['override'] = 0;  // override DW syntax disabled
 
+$conf['standard_linenums'] = 0;
+
 $conf['url_prettify_handlers'] = '';
 $conf['url_prettify_skins']    = '';
 
