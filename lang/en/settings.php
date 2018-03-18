@@ -10,6 +10,8 @@
 
 $lang['override'] = 'override &lt;code&gt; syntax to show the block pretty-printed';
 
+$lang['standard_linenums'] = 'Use linenumbers everywhere?';
+
 $lang['url_prettify_handlers'] = 'Base URL for prettify.js and additional language handler scripts<br />(ex: https://cdn.rawgit.com/google/code-prettify/master/src/)';
 $lang['url_prettify_skins']    = 'Base URL for color themes for code-prettify (css)<br />(ex: https://cdn.rawgit.com/google/code-prettify/master/styles/)';
 
