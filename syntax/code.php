@@ -71,6 +71,11 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                     $class['linenums'] = $m[0];
                 }
 
+                // Use linenumbers everywhere
+                if ($this->getConf('standard_linenums')) {
+                    $class['linenums'] = 'linenums';
+                }
+
                 // title parameter
                 if ($title) {
                     $plugin = substr(get_class($this), 14);
