@@ -8,6 +8,8 @@
 
 $meta['override'] = array('onoff');  // override DW syntax
 
+$meta['standard_linenums'] = array('onoff');
+
 $meta['url_prettify_handlers'] = array('string');
 $meta['url_prettify_skins']    = array('string');
 
