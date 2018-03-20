@@ -20,7 +20,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
         // allowing nested "<angle pairs>" in title using regex atomic grouping
         $n = 3;
-        $param = str_repeat('(?>[^<>\n]+|<', $n).str_repeat('>)*', $n);       
+        $param = str_repeat('(?>[^<>\n]+|<', $n).str_repeat('>)*', $n);
 
         // syntax patterns
         $this->pattern[1] = '<Code\b'.$param.'>'.'(?=.*?</Code>)';
@@ -64,11 +64,14 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
                 // prettifier parameters
                 $class['prettify'] = 'prettyprint';
-                if (preg_match('/(?:^:| (?:lang[-:])?)(?!(?:no-?)?linenums)(\w+)/', $params, $m)) {
-                    $class['language'] = 'lang-'.$m[1];
+                if ($params[0] == ':') {
+                    list($lang, $params) = explode(' ', $params);
+                    $class['language'] = 'lang-'.substr($lang, 1);
+                } elseif (preg_match('/\blang-\w+/', $params, $m)) {
+                    $class['language'] = $m[0];
                 }
-                if (preg_match('/ linenums(:\d+)?/', $params, $m)) {
-                    $class['linenums'] = $m[0];
+                if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m)) {
+                    $class['linenums'] = $m[1] ? '' : $m[0];
                 }
 
                 // title parameter
