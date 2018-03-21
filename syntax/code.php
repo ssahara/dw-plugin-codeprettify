@@ -75,6 +75,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 } else {
                     $class['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
                 }
+                $params= implode(' ', $class);
 
                 // title parameter
                 if ($title) {
@@ -94,7 +95,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                     $handler->addPluginCall($plugin, $data, $state,$pos,$match);
                 }
 
-                return array($state, $class);
+                return array($state, $params);
             case DOKU_LEXER_UNMATCHED:
                 return array($state, $match);
             case DOKU_LEXER_EXIT:
@@ -124,8 +125,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 break;
 
             case DOKU_LEXER_ENTER:
-                $class = implode(' ', $data);
-                $renderer->doc .= '<pre class="'.$class.'">';
+                $renderer->doc .= '<pre class="'.$data.'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
                 $renderer->doc .= $renderer->_xmlEntities($data);
