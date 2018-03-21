@@ -9,10 +9,11 @@
  */
 
 $lang['override'] = 'override &lt;code&gt; syntax to show the block pretty-printed';
+$lang['linenums'] = 'enable line numbering implicitly';
 
-$lang['url_prettify_handlers'] = 'Base URL for prettify.js and additional language handler scripts<br />(ex: https://cdn.rawgit.com/google/code-prettify/master/src/)';
-$lang['url_prettify_skins']    = 'Base URL for color themes for code-prettify (css)<br />(ex: https://cdn.rawgit.com/google/code-prettify/master/styles/)';
+$lang['url_prettify_handlers'] = 'Base URL for prettify.js and additional language handler scripts<br /><small>(ex: https://cdn.rawgit.com/google/code-prettify/master/src/)</small>';
+$lang['url_prettify_skins']    = 'Base URL for color themes for code-prettify (css)<br /><small>(ex: https://cdn.rawgit.com/google/code-prettify/master/styles/)</small>';
 
-$lang['lang_handlers']  = 'additional langage handler (comma separated)';
-$lang['skin']           = 'color theme/skin name for prettify (CSS filename in code-prettify/styles/)';
+$lang['lang_handlers']  = 'additional langage handlers (comma separated)';
+$lang['skin']           = 'color theme for prettify (CSS filename in code-prettify/styles/)';
 

@@ -7,6 +7,7 @@
  */
 
 $meta['override'] = array('onoff');  // override DW syntax
+$meta['linenums'] = array('onoff');  // implicitly line numbering
 
 $meta['url_prettify_handlers'] = array('string');
 $meta['url_prettify_skins']    = array('string');

@@ -72,6 +72,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 }
                 if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m)) {
                     $class['linenums'] = $m[1] ? '' : $m[0];
+                } else {
+                    $class['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
                 }
 
                 // title parameter
