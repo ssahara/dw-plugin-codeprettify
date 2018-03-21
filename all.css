@@ -19,9 +19,6 @@ div.plugin_codeprettify + pre {
  * fold down longer line
  */
 pre.prettyprint {
-    white-space: -moz-prewrap;
-    white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -29,7 +26,18 @@ pre.prettyprint {
 /*
  * put line numbers on every line instead of just every fifth line
  */
-pre.prettyprint ol {
+pre.prettyprint ol.linenums {
     padding-left: 1em;
-    list-style: decimal outside;
+    list-style-position: outside;
 }
+pre.prettyprint ol.linenums > li.L0 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L1 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L2 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L3 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L4 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L5 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L6 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L7 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L8 { list-style-type: decimal; }
+pre.prettyprint ol.linenums > li.L9 { list-style-type: decimal; }
+
