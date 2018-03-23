@@ -64,16 +64,20 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
                 // prettifier parameters
                 $class['prettify'] = 'prettyprint';
-                if ($params[0] == ':') {
-                    list($lang, $params) = explode(' ', $params);
-                    $class['language'] = 'lang-'.substr($lang, 1);
-                } elseif (preg_match('/\blang-\w+/', $params, $m)) {
-                    $class['language'] = $m[0];
-                }
-                if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m)) {
-                    $class['linenums'] = $m[1] ? '' : $m[0];
+                $params = trim($params, ' :');
+                $check = 1;
+                if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
+                    ($check) && $check = $m[0][1];
+                    $class['linenums'] = $m[1][0] ? '' : $m[0][0];
                 } else {
                     $class['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
+                }
+                if (preg_match('/\blang-\w+/', $params, $m, PREG_OFFSET_CAPTURE)) {
+                    ($check) && $check = $m[0][1];
+                    $class['language'] = $m[0][0];
+                } elseif ($check) {
+                    list($lang, ) = explode(' ', $params, 2);
+                    $class['language'] = $lang ? 'lang-'.$lang : '';
                 }
                 $params= implode(' ', $class);
 
