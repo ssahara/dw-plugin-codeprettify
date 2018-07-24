@@ -16,6 +16,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     protected $pattern = array();
 
     function __construct() {
+        // syntax mode, drop 'syntax_' from class name
         $this->mode = substr(get_class($this), 7);
 
         // allowing nested "<angle pairs>" in title using regex atomic grouping
@@ -60,11 +61,37 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         switch ($state) {
             case DOKU_LEXER_ENTER:
                 $match = substr($match, 5, -1);
-                list($params, $title) = explode('|', $match);
+                list ($params, $title) = explode('|', $match);
 
                 // prettifier parameters
                 $class['prettify'] = 'prettyprint';
                 $params = trim($params, ' :');
+
+                // replace geshi parameters (since DokuWiki 2018-04-22 Greebo)
+                // - enable_line_numbers=0    -> nolinenums
+                // - start_line_numbers_at=1  -> linenums:1
+                // @see also https://www.dokuwiki.org/syntax_highlighting
+                if ( preg_match('/\[.*\]/', $params, $matches) ) {
+                    $geshi_params = str_replace('"', '', strtolower(substr($matches[0], 1, -1)));
+                    if (preg_match_all('/(\w+)=?(\w+)?/', $geshi_params, $m)) {
+                        $geshi = array_combine($m[1], $m[2]);
+
+                        if (array_key_exists('enable_line_numbers', $geshi)) {
+                            $option = $geshi['enable_line_numbers'];
+                            $prefix = (empty($option) || $option == 'false') ? 'no' : '';
+                        }
+                        if (array_key_exists('start_line_numbers_at', $geshi)) {
+                            $option = $geshi['start_line_numbers_at'];
+                            $suffix = ($option > 0) ? ':'.$option : '';
+                        }
+                        $geshi_params = ($prefix or $suffix) ? $prefix.'linenums'.$suffix : '';
+                    } else {
+                        $geshi_params = '';
+                    }
+                    $params = str_replace($matches[0], $geshi_params, $params);
+                }
+
+                // prettifier parameters, again
                 $check = 1;
                 if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
                     ($check) && $check = $m[0][1];
@@ -87,7 +114,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                     $calls = p_get_instructions($title);
 
                     // open_div instruction
-                    $data = array('div_open','');
+                    $data = ['div_open',''];
                     $handler->addPluginCall($plugin, $data, $state,$pos,$match);
 
                     // title: skip first "document_start" and last "document_end" instructions
@@ -95,15 +122,15 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                         $handler->CallWriter->writeCall($calls[$i]);
                     }
                     // close_div instruction
-                    $data = array('div_close','');
+                    $data = ['div_close',''];
                     $handler->addPluginCall($plugin, $data, $state,$pos,$match);
                 }
 
-                return array($state, $params);
+                return $data = [$state, $params];
             case DOKU_LEXER_UNMATCHED:
-                return array($state, $match);
+                return $data = [$state, $match];
             case DOKU_LEXER_EXIT:
-                return array($state, '');
+                return $data = [$state, ''];
         }
         return false;
     }
@@ -111,11 +138,11 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      */
-    function render($format, Doku_Renderer $renderer, $indata) {
+    function render($format, Doku_Renderer $renderer, $data) {
 
         if ($format == 'metadata') return false;
-        if (empty($indata)) return false;
-        list($state, $data) = $indata;
+        if (empty($data)) return false;
+        list ($state, $args) = $data;
 
         switch ($state) {
             case 'div_open':
@@ -129,10 +156,10 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 break;
 
             case DOKU_LEXER_ENTER:
-                $renderer->doc .= '<pre class="'.$data.'">';
+                $renderer->doc .= '<pre class="'.$args.'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
-                $renderer->doc .= $renderer->_xmlEntities($data);
+                $renderer->doc .= $renderer->_xmlEntities($args);
                 break;
             case DOKU_LEXER_EXIT:
                 $renderer->doc .= '</pre>';

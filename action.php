@@ -8,11 +8,6 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-
-/**
- * All DokuWiki plugins to interfere with the event system
- * need to inherit from this class
- */
 class action_plugin_codeprettify extends DokuWiki_Action_Plugin {
 
     // register hook
