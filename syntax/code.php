@@ -60,8 +60,25 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
         switch ($state) {
             case DOKU_LEXER_ENTER:
-                $match = substr($match, 5, -1);
-                list ($params, $title) = explode('|', $match);
+                list ($params, $title) = explode('|', substr($match, 5, -1));
+
+                // title parameter
+                if ($title) {
+                    $plugin = substr(get_class($this), 14);
+                    $calls = p_get_instructions($title);
+
+                    // open_div instruction
+                    $data = ['div_open',''];
+                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
+
+                    // title: skip first "document_start" and last "document_end" instructions
+                    for ($i = 1, $max = count($calls)-1; $i < $max; $i++) {
+                        $handler->CallWriter->writeCall($calls[$i]);
+                    }
+                    // close_div instruction
+                    $data = ['div_close',''];
+                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
+                }
 
                 // prettifier parameters
                 $class['prettify'] = 'prettyprint';
@@ -108,24 +125,6 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 }
                 $params= implode(' ', $class);
 
-                // title parameter
-                if ($title) {
-                    $plugin = substr(get_class($this), 14);
-                    $calls = p_get_instructions($title);
-
-                    // open_div instruction
-                    $data = ['div_open',''];
-                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
-
-                    // title: skip first "document_start" and last "document_end" instructions
-                    for ($i = 1, $max = count($calls)-1; $i < $max; $i++) {
-                        $handler->CallWriter->writeCall($calls[$i]);
-                    }
-                    // close_div instruction
-                    $data = ['div_close',''];
-                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
-                }
-
                 return $data = [$state, $params];
             case DOKU_LEXER_UNMATCHED:
                 return $data = [$state, $match];
@@ -156,7 +155,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 break;
 
             case DOKU_LEXER_ENTER:
-                $renderer->doc .= '<pre class="'.$args.'">';
+                $renderer->doc .= '<pre class="'.hsc($args).'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
                 $renderer->doc .= $renderer->_xmlEntities($args);
