@@ -73,7 +73,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
             // make keys lowercase
             $keys   = array_map('strtolower', $matches[1]);
-            // interpret boolian string
+            // interpret boolian string values
             $values = array_map(
                 function($value) {
                     if (is_numeric($value)) {
@@ -107,7 +107,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
 
         if (isset($opts['enable_line_numbers'])) {
             $option = &$opts['enable_line_numbers'];
-            $prefix = (empty($option) || $option == 'false') ? 'no' : '';
+            $prefix = ($option == 0) ? 'no' : '';
         }
         if (isset($opts['start_line_numbers_at'])) {
             $option = &$opts['start_line_numbers_at'];
@@ -115,6 +115,37 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         }
         return ($prefix or $suffix) ? $prefix.'linenums'.$suffix : '';
     }
+
+
+    /**
+     * Prettifier Options Parser
+     *
+     * @param string $params
+     * @return array
+     */
+    private function getPrettifierOptions($params) {
+        $opts = [];
+
+        // offset holds the position of the matched string
+        // if offset become 0, the first token of given params is NOT language
+        $offset = 1;
+        if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
+            $offset = ($offset > 0) ? $m[0][1] : 1;
+            $opts['linenums'] = $m[1][0] ? '' : $m[0][0];
+        } else {
+            $opts['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
+        }
+        if (preg_match('/\blang-\w+/', $params, $m, PREG_OFFSET_CAPTURE)) {
+            $offset = ($offset > 0) ? $m[0][1] : 1;
+            $opts['language'] = $m[0][0];
+        } elseif ($offset) {
+            // assume the first token is language; ex. C, php, css
+            list ($lang, ) = explode(' ', $params, 2);
+            $opts['language'] = $lang ? 'lang-'.$lang : '';
+        }
+        return $opts;
+    }
+
 
     /**
      * Handle the match
@@ -147,7 +178,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 $params = trim($params, ' :');
 
                 if ( preg_match('/\[.*\]/', $params, $matches) ) {
-                    // replace GeSHi parameters 
+                    // replace GeSHi parameters
                     $params = str_replace(
                         $matches[0],
                         $this->strGeshiOptions( $this->getGeshiOption($matches[0]) ),
@@ -155,23 +186,9 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                     );
                 }
 
-                // prettifier parameters, again
-                $class['prettify'] = 'prettyprint';
-                $check = 1;
-                if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
-                    ($check) && $check = $m[0][1];
-                    $class['linenums'] = $m[1][0] ? '' : $m[0][0];
-                } else {
-                    $class['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
-                }
-                if (preg_match('/\blang-\w+/', $params, $m, PREG_OFFSET_CAPTURE)) {
-                    ($check) && $check = $m[0][1];
-                    $class['language'] = $m[0][0];
-                } elseif ($check) {
-                    list($lang, ) = explode(' ', $params, 2);
-                    $class['language'] = $lang ? 'lang-'.$lang : '';
-                }
-                $params= implode(' ', $class);
+                $opts['prettify'] = 'prettyprint';
+                $opts += $this->getPrettifierOptions($params);
+                $params= implode(' ', $opts);
 
                 return $data = [$state, $params];
             case DOKU_LEXER_UNMATCHED:
