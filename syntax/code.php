@@ -57,7 +57,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * GeSHi Options Parser
      *
-     * DokuWiki release 2018-04-22 “Greebo” supports some GeSHi options
+     * DokuWiki release 2018-04-22 "Greebo" supports some GeSHi options
      * for syntax highlighting
      * alternative of parse_highlight_options() in inc/parser/handler.php
      *
@@ -100,7 +100,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      * - start_line_numbers_at=1  -> linenums:1
      *
      * @param array $opts  GeSHi options
-     * @return string
+     * @return string  Prettifier linenums parameter
      * @see also https://www.dokuwiki.org/syntax_highlighting
      */
     private function strGeshiOptions(array $opts=[]) {
