@@ -53,6 +53,69 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         }
     }
 
+
+    /**
+     * GeSHi Options Parser
+     *
+     * DokuWiki release 2018-04-22 “Greebo” supports some GeSHi options
+     * for syntax highlighting
+     * alternative of parse_highlight_options() in inc/parser/handler.php
+     *
+     * @param string $params  space separated list of key-value pairs
+     * @return array
+     * @see also https://www.dokuwiki.org/syntax_highlighting
+     */
+    private function getGeshiOption($params) {
+        $opts = [];
+        // remove enclosing brackets and double-quotes
+        $params = str_replace('"', '', trim($params, '[]'));
+        if (preg_match_all('/(\w+)=?(\w+)?/', $params, $matches)) {
+
+            // make keys lowercase
+            $keys   = array_map('strtolower', $matches[1]);
+            // interpret boolian string
+            $values = array_map(
+                function($value) {
+                    if (is_numeric($value)) {
+                        return $value;
+                    } else {
+                        $s = strtolower($value);
+                        if ($s == 'true')  $value = 1;
+                        if ($s == 'false') $value = 0;
+                        return $value;
+                    }
+                },
+                $matches[2]
+            );
+
+           // Note: last one prevails if same keys have appeared
+           $opts = array_combine($keys, $values);
+        }
+        return $opts;
+    }
+
+    /**
+     * Convert/interpret GeSHi Options to correspondent Prettifier options
+     * - enable_line_numbers=0    -> nolinenums
+     * - start_line_numbers_at=1  -> linenums:1
+     *
+     * @param array $opts  GeSHi options
+     * @return string
+     * @see also https://www.dokuwiki.org/syntax_highlighting
+     */
+    private function strGeshiOptions(array $opts=[]) {
+
+        if (isset($opts['enable_line_numbers'])) {
+            $option = &$opts['enable_line_numbers'];
+            $prefix = (empty($option) || $option == 'false') ? 'no' : '';
+        }
+        if (isset($opts['start_line_numbers_at'])) {
+            $option = &$opts['start_line_numbers_at'];
+            $suffix = ($option > 0) ? ':'.$option : '';
+        }
+        return ($prefix or $suffix) ? $prefix.'linenums'.$suffix : '';
+    }
+
     /**
      * Handle the match
      */
@@ -81,34 +144,19 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 }
 
                 // prettifier parameters
-                $class['prettify'] = 'prettyprint';
                 $params = trim($params, ' :');
 
-                // replace geshi parameters (since DokuWiki 2018-04-22 Greebo)
-                // - enable_line_numbers=0    -> nolinenums
-                // - start_line_numbers_at=1  -> linenums:1
-                // @see also https://www.dokuwiki.org/syntax_highlighting
                 if ( preg_match('/\[.*\]/', $params, $matches) ) {
-                    $geshi_params = str_replace('"', '', strtolower(substr($matches[0], 1, -1)));
-                    if (preg_match_all('/(\w+)=?(\w+)?/', $geshi_params, $m)) {
-                        $geshi = array_combine($m[1], $m[2]);
-
-                        if (array_key_exists('enable_line_numbers', $geshi)) {
-                            $option = $geshi['enable_line_numbers'];
-                            $prefix = (empty($option) || $option == 'false') ? 'no' : '';
-                        }
-                        if (array_key_exists('start_line_numbers_at', $geshi)) {
-                            $option = $geshi['start_line_numbers_at'];
-                            $suffix = ($option > 0) ? ':'.$option : '';
-                        }
-                        $geshi_params = ($prefix or $suffix) ? $prefix.'linenums'.$suffix : '';
-                    } else {
-                        $geshi_params = '';
-                    }
-                    $params = str_replace($matches[0], $geshi_params, $params);
+                    // replace GeSHi parameters 
+                    $params = str_replace(
+                        $matches[0],
+                        $this->strGeshiOptions( $this->getGeshiOption($matches[0]) ),
+                        $params
+                    );
                 }
 
                 // prettifier parameters, again
+                $class['prettify'] = 'prettyprint';
                 $check = 1;
                 if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
                     ($check) && $check = $m[0][1];
