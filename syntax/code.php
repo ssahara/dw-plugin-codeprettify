@@ -8,14 +8,21 @@
  * usage: ex. <Code:css linenums:5 lang-css | title > ... </Code>
  */
 
-if(!defined('DOKU_INC')) die();
+if (!defined('DOKU_INC')) die();
 
-class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
+{
+    public function getType() { return 'protected'; }
+    public function getPType(){ return 'block'; }
+    public function getSort() { return 199; } // < native 'code' mode (=200)
 
-    protected $mode;
-    protected $pattern = array();
+    /**
+     * Connect pattern to lexer
+     */
+    protected $mode, $pattern;
 
-    function __construct() {
+    public function preConnect()
+    {
         // syntax mode, drop 'syntax_' from class name
         $this->mode = substr(get_class($this), 7);
 
@@ -32,21 +39,16 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
         $this->pattern[14] = '</code>';
     }
 
-    function getType() { return 'protected'; }
-    function getPType(){ return 'block'; }
-    function getSort() { return 199; } // < native 'code' mode (=200)
-
-    /**
-     * Connect pattern to lexer
-     */
-    function connectTo($mode) {
+    public function connectTo($mode)
+    {
         $this->Lexer->addEntryPattern($this->pattern[1], $mode, $this->mode);
         if ($this->getConf('override')) {
             $this->Lexer->addEntryPattern($this->pattern[11], $mode, $this->mode);
         }
     }
 
-    function postConnect() {
+    public function postConnect()
+    {
         $this->Lexer->addExitPattern($this->pattern[4], $this->mode);
         if ($this->getConf('override')) {
             $this->Lexer->addExitPattern($this->pattern[14], $this->mode);
@@ -65,7 +67,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      * @return array
      * @see also https://www.dokuwiki.org/syntax_highlighting
      */
-    private function getGeshiOption($params) {
+    private function getGeshiOption($params)
+    {
         $opts = [];
         // remove enclosing brackets and double-quotes
         $params = str_replace('"', '', trim($params, '[]'));
@@ -103,8 +106,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      * @return string  Prettifier linenums parameter
      * @see also https://www.dokuwiki.org/syntax_highlighting
      */
-    private function strGeshiOptions(array $opts=[]) {
-
+    private function strGeshiOptions(array $opts=[])
+    {
         if (isset($opts['enable_line_numbers'])) {
             $option = &$opts['enable_line_numbers'];
             $prefix = ($option == 0) ? 'no' : '';
@@ -123,7 +126,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
      * @param string $params
      * @return array
      */
-    private function getPrettifierOptions($params) {
+    private function getPrettifierOptions($params)
+    {
         $opts = [];
 
         // offset holds the position of the matched string
@@ -150,11 +154,11 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    function handle($match, $state, $pos, Doku_Handler $handler) {
-
+    public function handle($match, $state, $pos, Doku_Handler $handler)
+    {
         switch ($state) {
             case DOKU_LEXER_ENTER:
-                list ($params, $title) = explode('|', substr($match, 5, -1));
+                [$params, $title] = explode('|', substr($match, 5, -1));
 
                 // title parameter
                 if ($title) {
@@ -202,11 +206,11 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      */
-    function render($format, Doku_Renderer $renderer, $data) {
-
+    function render($format, Doku_Renderer $renderer, $data)
+    {
         if ($format == 'metadata') return false;
         if (empty($data)) return false;
-        list ($state, $args) = $data;
+        [$state, $args] = $data;
 
         switch ($state) {
             case 'div_open':
@@ -230,7 +234,6 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin {
                 break;
         }
         return true;
-
     }
 
 }
