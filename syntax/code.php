@@ -14,12 +14,16 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
 {
     public function getType() { return 'protected'; }
     public function getPType(){ return 'block'; }
-    public function getSort() { return 199; } // < native 'code' mode (=200)
 
     /**
-     * Connect pattern to lexer
+     * Connect pattern to lexer, implement Doku_Parser_Mode_Interface
      */
     protected $mode, $pattern;
+
+    public function getSort()
+    {
+        return 199; // < native 'code' mode (=200)
+    }
 
     public function preConnect()
     {
