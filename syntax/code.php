@@ -162,7 +162,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     {
         switch ($state) {
             case DOKU_LEXER_ENTER:
-                [$params, $title] = explode('|', substr($match, 5, -1));
+                list($params, $title) = explode('|', substr($match, 5, -1), 2);
 
                 // title parameter
                 if ($title) {
@@ -214,7 +214,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     {
         if ($format == 'metadata') return false;
         if (empty($data)) return false;
-        [$state, $args] = $data;
+        list($state, $args) = $data;
 
         switch ($state) {
             case 'div_open':
