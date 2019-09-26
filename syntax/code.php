@@ -12,8 +12,15 @@ if (!defined('DOKU_INC')) die();
 
 class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
 {
-    public function getType() { return 'protected'; }
-    public function getPType(){ return 'block'; }
+    public function getType()
+    {   // Syntax Type
+        return 'protected';
+    }
+
+    public function getPType()
+    {   // Paragraph Type
+        return 'block';
+    }
 
     /**
      * Connect pattern to lexer, implement Doku_Parser_Mode_Interface
