@@ -23,12 +23,12 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     }
 
     /**
-     * Connect pattern to lexer, implement Doku_Parser_Mode_Interface
+     * Connect pattern to lexer
      */
     protected $mode, $pattern;
 
     public function getSort()
-    {
+    {   // sort number used to determine priority of this mode
         return 199; // < native 'code' mode (=200)
     }
 
@@ -173,20 +173,10 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
 
                 // title parameter
                 if ($title) {
-                    $plugin = substr(get_class($this), 14);
-                    $calls = p_get_instructions($title);
-
-                    // open_div instruction
-                    $data = ['div_open',''];
-                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
-
-                    // title: skip first "document_start" and last "document_end" instructions
-                    for ($i = 1, $max = count($calls)-1; $i < $max; $i++) {
-                        $handler->CallWriter->writeCall($calls[$i]);
-                    }
-                    // close_div instruction
-                    $data = ['div_close',''];
-                    $handler->addPluginCall($plugin, $data, $state,$pos,$match);
+                    // remove first "document_start" and last "document_end" instructions
+                    $calls = array_slice(p_get_instructions($title), 1, -1);
+                } else {
+                    $calls = null;
                 }
 
                 // prettifier parameters
@@ -205,7 +195,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
                 $opts += $this->getPrettifierOptions($params);
                 $params= implode(' ', $opts);
 
-                return $data = [$state, $params];
+                return $data = [$state, $params, $calls];
             case DOKU_LEXER_UNMATCHED:
                 return $data = [$state, $match];
             case DOKU_LEXER_EXIT:
@@ -221,20 +211,16 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     {
         if ($format == 'metadata') return false;
         if (empty($data)) return false;
-        list($state, $args) = $data;
+        list($state, $args, $calls) = $data;
 
         switch ($state) {
-            case 'div_open':
-                $html = '<div class="plugin_codeprettify">';
-                $renderer->doc .= $html;
-                break;
-
-            case 'div_close':
-                $html = '</div>';
-                $renderer->doc .= $html;
-                break;
-
             case DOKU_LEXER_ENTER:
+                if (isset($calls)) {
+                    // title of code box
+                    $renderer->doc .= '<div class="plugin_codeprettify">';
+                    $renderer->nest($calls);
+                    $renderer->doc .= '</div>';
+                }
                 $renderer->doc .= '<pre class="'.hsc($args).'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
