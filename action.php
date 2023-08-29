@@ -5,9 +5,6 @@
  * @license GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author  Satoshi Sahara <sahara.satoshi@gmail.com>
  */
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
 class action_plugin_codeprettify extends DokuWiki_Action_Plugin
 {
     // register hook
@@ -54,6 +51,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin
                 'type'    => 'text/javascript',
                 'charset' => 'utf-8',
                 'src'     => $urlPrettifyHandlers. $script.'.js',
+                'defer'   => 'defer',
                 '_data'   => '',
             ];
         }
@@ -65,6 +63,7 @@ class action_plugin_codeprettify extends DokuWiki_Action_Plugin
             'type'    => 'text/javascript',
             'charset' => 'utf-8',
             'src'     => DOKU_BASE.'lib/plugins/codeprettify/code-prettify/src/lang-none.js',
+            'defer'   => 'defer',
             '_data'   => '',
         ];
 
