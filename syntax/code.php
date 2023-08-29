@@ -7,9 +7,6 @@
  *
  * usage: ex. <Code:css linenums:5 lang-css | title > ... </Code>
  */
-
-if (!defined('DOKU_INC')) die();
-
 class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
 {
     public function getType()
@@ -35,7 +32,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     public function preConnect()
     {
         // syntax mode, drop 'syntax_' from class name
-        $this->mode = substr(get_class($this), 7);
+        $this->mode = substr(__CLASS__, 7);
 
         // allowing nested "<angle pairs>" in title using regex atomic grouping
         $n = 3;
@@ -169,7 +166,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     {
         switch ($state) {
             case DOKU_LEXER_ENTER:
-                list($params, $title) = explode('|', substr($match, 5, -1), 2);
+                list($params, $title) = array_pad(explode('|', substr($match, 5, -1), 2), 2, '');
 
                 // title parameter
                 if ($title) {
@@ -211,10 +208,11 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
     {
         if ($format == 'metadata') return false;
         if (empty($data)) return false;
-        list($state, $args, $calls) = $data;
 
+        $state = $data[0];
         switch ($state) {
             case DOKU_LEXER_ENTER:
+                list($args, $calls) = array($data[1], $data[2]);
                 if (isset($calls)) {
                     // title of code box
                     $renderer->doc .= '<div class="plugin_codeprettify">';
@@ -224,7 +222,8 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
                 $renderer->doc .= '<pre class="'.hsc($args).'">';
                 break;
             case DOKU_LEXER_UNMATCHED:
-                $renderer->doc .= $renderer->_xmlEntities($args);
+                $match = $data[1];
+                $renderer->doc .= $renderer->_xmlEntities($match);
                 break;
             case DOKU_LEXER_EXIT:
                 $renderer->doc .= '</pre>';
