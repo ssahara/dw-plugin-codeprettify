@@ -116,15 +116,14 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
      */
     private function strGeshiOptions(array $opts=[])
     {
-        if (isset($opts['enable_line_numbers'])) {
-            $option = &$opts['enable_line_numbers'];
-            $prefix = ($option == 0) ? 'no' : '';
+        $option = 'linenums';
+        if (isset($opts['enable_line_numbers']) && $opts['enable_line_numbers'] == 0) {
+            $option = 'no'.$option;
         }
-        if (isset($opts['start_line_numbers_at'])) {
-            $option = &$opts['start_line_numbers_at'];
-            $suffix = ($option > 0) ? ':'.$option : '';
+        if (isset($opts['start_line_numbers_at']) && $opts['start_line_numbers_at'] > 0) {
+            $option = $option.':'.$opts['start_line_numbers_at'];
         }
-        return ($prefix or $suffix) ? $prefix.'linenums'.$suffix : '';
+        return $option;
     }
 
 
