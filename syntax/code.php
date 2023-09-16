@@ -142,7 +142,7 @@ class syntax_plugin_codeprettify_code extends DokuWiki_Syntax_Plugin
         $offset = 1;
         if (preg_match('/\b(no)?linenums(:\d+)?/', $params, $m, PREG_OFFSET_CAPTURE)) {
             $offset = ($offset > 0) ? $m[0][1] : 1;
-            $opts['linenums'] = $m[1][0] ? '' : $m[0][0];
+            $opts['linenums'] = ('no' == $m[1][0] ?? '') ? 'linenums:0' : $m[0][0];
         } else {
             $opts['linenums'] = $this->getConf('linenums') ? 'linenums' : '';
         }
